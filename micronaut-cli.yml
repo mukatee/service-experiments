@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: mn.tf.serve.web
+---
+testFramework: spock
+sourceLanguage: groovy

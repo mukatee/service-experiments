@@ -1,0 +1,3 @@
+micronaut:
+  application:
+    name: mn-tf-serve-web
