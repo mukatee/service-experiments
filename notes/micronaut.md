@@ -3,6 +3,10 @@ https://e.printstacktrace.blog/micronaut-non-blocking-and-async-part1/
 
 https://medium.com/@walkingtreetech/micronaut-setup-and-getting-started-with-sample-crud-application-45ac0636c33f
 
+https://guides.micronaut.io/micronaut-error-handling/guide/index.html
+
+https://micronaut-projects.github.io/micronaut-views/latest/guide/index.html
+
 ## Create app
 mn create-app --lang=groovy mn-tf-serve-web
 
