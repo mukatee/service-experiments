@@ -1,3 +1,9 @@
 micronaut:
   application:
     name: mn-tf-serve-web
+
+bintray:
+  organization: micronaut
+  repository: profiles
+  apiversion: v1
+
