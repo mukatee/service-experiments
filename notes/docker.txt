@@ -1,0 +1,116 @@
+https://github.com/wsargent/docker-cheat-sheet
+https://coderwall.com/p/2es5jw/docker-cheat-sheet-with-examples
+https://github.com/wsargent/docker-cheat-sheet
+
+#client:
+brew install docker
+
+#daemon, cask = GUI app install
+brew cask install docker
+
+#show info on docker system
+docker info
+
+#find images
+docker search mariadb
+
+#search image details:
+http://hub.docker.com
+
+#pull image to localhost
+#docker pull mariadb:latest
+docker pull mariadb/server:latest
+
+#run image: https://docs.docker.com/engine/reference/run/
+#--name = container name,
+#-d = detached, container exits when root process in container exits, container will run in background with -d. 
+#to see logs in a background container, do docker logs -f CONTAINERID
+## in case of mariadb image, it says CMD ["mysqld_safe"] which seems to be the default command executed on run, starting the db daemon
+##https://github.com/dockerfile/mariadb/blob/master/Dockerfile
+#-e = set environment variable, can have multiple -e for multiple environment variables
+#root process if just image name given?
+docker run --name mymariadb-container -e MYSQL_ROOT_PASSWORD=secret_pw -d mariadb/server:latest
+
+#above should start the mariadb runnign, to see it is running and get container id:
+#https://stackoverflow.com/questions/16840409/how-to-list-containers-in-docker
+docker ps
+#to see also stopped containers
+docker ps -a
+
+#or alternatively
+docker container ls -a
+
+#to delete container
+docker rm CONTAINERNAME
+
+#show container size
+docker ps -s
+
+#show also size of stopped containers
+docker ps -as
+
+#to list docker images also
+docker image ls
+
+#open a shell in container
+##-i = interactive, pipes STDOUT from container to current shell, STDIN from current shell to container
+##-t = pseudo tty, allows the piped commands to be passed to the container shell
+
+docker exec -it discord-mariadb bash
+
+##using interactive without -t: https://stackoverflow.com/questions/35459652/when-would-i-use-interactive-without-tty-in-a-docker-container
+
+
+#show detailed information on container:
+docker inspect discord-mariadb
+
+#list all exposed ports on all containers
+docker container ls
+
+#list exposed ports on containers matching name filter:
+docker container ls -f name=discord-mariadbss
+
+#https://stackoverflow.com/questions/22111060/what-is-the-difference-between-expose-and-publish-in-docker
+#exposed ports are listed in dockerfile  with EXPOSE 3306
+#exposed ports are not visible outside container unless published
+#publish port 3306 from container as 3310 on host:
+docker run --name mymariadb-container -p3310:3306 -e MYSQL_ROOT_PASSWORD=secret_pw -d mariadb/server:latest
+
+#https://www.ctl.io/developers/blog/post/docker-networking-rules/
+#publish all ports mapped as EXPOSE in dockerfile, on same port on host as EXPOSE
+docker run --name mymariadb-container -P -e MYSQL_ROOT_PASSWORD=secret_pw -d mariadb/server:latest
+
+#above would expose port 3306 from container to port 3306 on host, since this is marked as EXPOSE in dockerfile
+
+#if getting access denied error for mariadb commands, such as "service mysql status"
+#https://stackoverflow.com/questions/11644300/access-denied-for-user-debian-sys-maint
+#check password in config:
+cat /etc/mysql/debian.cnf
+user     = debian-sys-maint
+password = dksadjalskd
+
+#set same password to mysql user with same name
+GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY 'dksadjalskd';
+
+#disk storage on macos
+https://docs.docker.com/docker-for-mac/space/
+
+
+#define data directory for mariadb
+#by default docker on macos seems to put everything in one large file, which is found via the GUI preferences dialog
+docker run --name some-mariadb -v /my/own/datadir:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
+
+
+
+#build a new container image
+#https://docs.docker.com/engine/reference/builder/
+#-t = repository name + tags. Here repository name = teemu/mariadb, tags would be added as teemu/mariadb:v0.1
+#-f = location of dockerfile, otherwise DockerFile in context dir
+#./docker in the end = context dir, look here for DockerFile and any files it references
+docker build -t teemu/mariadb -f ~/Dropbox/mariadb_dockerfile.txt ./docker
+
+
+
+
+
+
